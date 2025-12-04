@@ -1,5 +1,10 @@
 package com.sergioborne.nqueens.ui.board
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +34,11 @@ fun Cell(
                 onClick.invoke()
             }
     ) {
-        if (isQueen) {
+        AnimatedVisibility(
+            visible = isQueen,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
             Queen(
                 color = Color.Green
             )

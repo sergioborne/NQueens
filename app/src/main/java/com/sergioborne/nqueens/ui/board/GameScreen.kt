@@ -1,10 +1,14 @@
 package com.sergioborne.nqueens.ui.board
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
@@ -16,13 +20,16 @@ fun GameScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-        GameContent(
-            boardUiState = state.boardState,
-            modifier = Modifier.padding(innerPadding),
-            onCellClicked = viewModel::onCellClicked
-        )
-        if (state.isVictory) {
-            ConfettiAnimation(onAnimationFinished = onVictoryAnimationFinished)
+        Box {
+            GameContent(
+                boardUiState = state.boardState,
+                modifier = Modifier
+                    .padding(innerPadding),
+                onCellClicked = viewModel::onCellClicked
+            )
+            if (state.isVictory) {
+                ConfettiAnimation(onAnimationFinished = onVictoryAnimationFinished)
+            }
         }
     }
 }
@@ -33,10 +40,16 @@ private fun GameContent(
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
 ) {
-    Chessboard(
-        boardUiState = boardUiState,
-        modifier = modifier,
-        onCellClicked = onCellClicked
-    )
+    Column(
+        modifier = Modifier
+            .fillMaxSize(),
+        verticalArrangement = Arrangement.Center
+    ) {
+        Chessboard(
+            boardUiState = boardUiState,
+            modifier = modifier,
+            onCellClicked = onCellClicked
+        )
+    }
 
 }
