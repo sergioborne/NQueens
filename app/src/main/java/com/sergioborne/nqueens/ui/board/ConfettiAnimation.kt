@@ -25,7 +25,7 @@ private data class Particle(
 )
 
 @Composable
-fun FireworksAnimation(
+fun ConfettiAnimation(
     modifier: Modifier = Modifier,
     onAnimationFinished: () -> Unit
 ) {
@@ -79,7 +79,7 @@ fun FireworksAnimation(
                 drawCircle(
                     color = particle.color,
                     center = Offset(currentX, currentY),
-                    radius = 4f,
+                    radius = 10f,
                     alpha = (1f - particleProgress)
                 )
             }
@@ -90,5 +90,5 @@ fun FireworksAnimation(
 @Preview
 @Composable
 private fun FireworksAnimationPreview() {
-    FireworksAnimation {}
+    ConfettiAnimation {}
 }

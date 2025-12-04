@@ -22,7 +22,7 @@ fun GameScreen(
             onCellClicked = viewModel::onCellClicked
         )
         if (state.isVictory) {
-            FireworksAnimation(onAnimationFinished = onVictoryAnimationFinished)
+            ConfettiAnimation(onAnimationFinished = onVictoryAnimationFinished)
         }
     }
 }
