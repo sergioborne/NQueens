@@ -7,27 +7,10 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sergioborne.nqueens.ui.BoardUiState
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
-
-@Composable
-fun ChessboardScreen(
-    modifier: Modifier = Modifier,
-    viewModel: BoardViewmodel = hiltViewModel()
-) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    Chessboard(
-        boardUiState = state,
-        modifier = modifier,
-        onCellClicked = viewModel::onCellClicked
-    )
-}
 
 @Composable
 fun Chessboard(
@@ -49,7 +32,11 @@ fun Chessboard(
                         .weight(1f)
                 ) {
                     rowContent.mapIndexed { column, cell ->
-                        val color = if ((row + column) % 2 == 0) Color.White else Color.Black
+                        val color = when {
+                            cell.isAttacked -> Color.Red
+                            ((row + column) % 2 == 0) -> Color.White
+                            else -> Color.Black
+                        }
                         Cell(
                             isQueen = cell.isQueen,
                             backgroundColor = color,
