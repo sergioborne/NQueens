@@ -1,11 +1,10 @@
 package com.sergioborne.nqueens.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.sergioborne.nqueens.ui.board.GameScreen
@@ -14,7 +13,7 @@ import com.sergioborne.nqueens.ui.main.MainScreen
 
 @Composable
 fun AppNavigation() {
-    val backStack = remember { mutableStateListOf<Any>(MainDestinations.MainScreen) }
+    val backStack = rememberNavBackStack(MainDestinations.MainScreen)
 
     NavDisplay(
         backStack = backStack,

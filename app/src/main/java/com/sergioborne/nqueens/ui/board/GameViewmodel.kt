@@ -34,6 +34,14 @@ class GameViewModel @AssistedInject constructor(
         )
     }
 
+    fun onClearButtonClicked(){
+        _uiState.value = GameUiState(
+            boardState = BoardUiState.empty(boardSize),
+            remainingQueens = boardSize,
+            isVictory = false,
+        )
+    }
+
     @AssistedFactory
     interface Factory {
         fun create(boardSize: Int): GameViewModel
