@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun GameScreen(
@@ -37,7 +38,10 @@ fun GameScreen(
     ) { innerPadding ->
         Box {
             GameContent(
-                gameUiState = state,
+                size = state.boardState.size,
+                remainingQueens = state.remainingQueens,
+                elapsedTime = state.elapsedTime,
+                cells = state.boardState.cells,
                 modifier = Modifier
                     .padding(innerPadding),
                 onCellClicked = viewModel::onCellClicked,
@@ -52,7 +56,10 @@ fun GameScreen(
 
 @Composable
 private fun GameContent(
-    gameUiState: GameUiState,
+    size: Int,
+    remainingQueens: Int,
+    elapsedTime: String,
+    cells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -62,14 +69,20 @@ private fun GameContent(
 
     if (isPortrait) {
         PortraitGameLayout(
-            gameUiState = gameUiState,
+            size = size,
+            remainingQueens = remainingQueens,
+            elapsedTime = elapsedTime,
+            cells = cells,
             modifier = modifier,
             onCellClicked = onCellClicked,
             onClearButtonClick = onClearButtonClick,
         )
     } else {
         LandscapeGameLayout(
-            gameUiState = gameUiState,
+            size = size,
+            remainingQueens = remainingQueens,
+            elapsedTime = elapsedTime,
+            cells = cells,
             modifier = modifier,
             onCellClicked = onCellClicked,
             onClearButtonClick = onClearButtonClick,
@@ -79,7 +92,10 @@ private fun GameContent(
 
 @Composable
 private fun PortraitGameLayout(
-    gameUiState: GameUiState,
+    size: Int,
+    remainingQueens: Int,
+    elapsedTime: String,
+    cells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -89,8 +105,8 @@ private fun PortraitGameLayout(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         GameStatus(
-            remainingQueens = gameUiState.remainingQueens,
-            elapsedTime = gameUiState.elapsedTime,
+            remainingQueens = remainingQueens,
+            elapsedTime = elapsedTime,
             isPortrait = true,
         )
         Column(
@@ -101,7 +117,8 @@ private fun PortraitGameLayout(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Chessboard(
-                boardUiState = gameUiState.boardState,
+                size = size,
+                cells = cells,
                 modifier = modifier,
                 onCellClicked = onCellClicked,
             )
@@ -114,7 +131,10 @@ private fun PortraitGameLayout(
 
 @Composable
 private fun LandscapeGameLayout(
-    gameUiState: GameUiState,
+    size: Int,
+    remainingQueens: Int,
+    elapsedTime: String,
+    cells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -125,12 +145,13 @@ private fun LandscapeGameLayout(
         horizontalArrangement = Arrangement.Center,
     ) {
         GameStatus(
-            remainingQueens = gameUiState.remainingQueens,
-            elapsedTime = gameUiState.elapsedTime,
+            remainingQueens = remainingQueens,
+            elapsedTime = elapsedTime,
             isPortrait = false,
         )
         Chessboard(
-            boardUiState = gameUiState.boardState,
+            size = size,
+            cells = cells,
             modifier = Modifier.fillMaxHeight(),
             onCellClicked = onCellClicked,
         )
@@ -174,12 +195,10 @@ private fun TimerText(elapsedTime: String, modifier: Modifier = Modifier) {
 fun GameContentPreview() {
     NQueensTheme {
         GameContent(
-            gameUiState = GameUiState(
-                boardState = BoardUiState.empty(8),
-                remainingQueens = 8,
-                isVictory = false,
-                elapsedTime = "0:00.00",
-            ),
+            size = 8,
+            cells = BoardUiState.empty(8).cells,
+            remainingQueens = 8,
+            elapsedTime = "0:00.00",
             onCellClicked = { _, _ -> },
             onClearButtonClick = {},
         )

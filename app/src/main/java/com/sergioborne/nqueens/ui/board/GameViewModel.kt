@@ -38,8 +38,8 @@ class GameViewModel @AssistedInject constructor(
 
     fun onCellClicked(rowPosition: Int, columnPosition: Int) {
         val newBoardState = _uiState.value.boardState.changePosition(rowPosition, columnPosition)
-        val remainingQueens = boardSize - newBoardState.cells.flatten().count { it.isQueen }
-        val isVictory = remainingQueens == 0 && newBoardState.cells.flatten().none { it.isAttacked }
+        val remainingQueens = boardSize - newBoardState.cells.count { it.isQueen }
+        val isVictory = remainingQueens == 0 && newBoardState.cells.none { it.isAttacked }
 
         if (isVictory) {
             stopTimer()

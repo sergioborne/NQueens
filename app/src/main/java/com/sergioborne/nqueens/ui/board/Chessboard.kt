@@ -11,14 +11,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 fun Chessboard(
-    boardUiState: BoardUiState,
+    size: Int,
+    cells: ImmutableList<CellUi>,
     onCellClicked: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -37,12 +38,13 @@ fun Chessboard(
         }.aspectRatio(1f)
 
         Column(modifier = sizeModifier) {
-            boardUiState.cells.mapIndexed { row, rowContent ->
+            repeat(size) { row ->
                 Row(
                     modifier = Modifier
                         .weight(1f)
                 ) {
-                    rowContent.mapIndexed { column, cell ->
+                    repeat(size) { column ->
+                        val cell = cells[row * size + column]
                         val color = when {
                             cell.isAttacked -> Color.Red
                             ((row + column) % 2 == 0) -> Color.White
@@ -68,9 +70,10 @@ fun Chessboard(
 fun ChessboardPreview() {
     NQueensTheme {
         Chessboard(
-            boardUiState = BoardUiState.empty(8)
+            size = 8,
+            cells = BoardUiState.empty(8)
                 .changePosition(1, 1)
-                .changePosition(2, 3),
+                .changePosition(2, 3).cells,
             onCellClicked = { _, _ -> },
         )
     }
