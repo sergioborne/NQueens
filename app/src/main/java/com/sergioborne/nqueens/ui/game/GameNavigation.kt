@@ -11,7 +11,10 @@ import com.sergioborne.nqueens.ui.board.GameScreen
 import com.sergioborne.nqueens.ui.board.GameViewModel
 
 @Composable
-fun GameNavigation() {
+fun GameNavigation(
+    onGameStarted: () -> Unit,
+    onGameFinished: () -> Unit,
+) {
     val backStack = rememberNavBackStack(GameDestinations.BoardSizeScreen)
 
     NavDisplay(
@@ -25,6 +28,7 @@ fun GameNavigation() {
             entry<GameDestinations.BoardSizeScreen> {
                 BoardSizeScreen(onNavigateToBoard = {
                     backStack.add(GameDestinations.ChessboardScreen(it))
+                    onGameStarted()
                 })
             }
 
@@ -36,6 +40,7 @@ fun GameNavigation() {
                 )
                 GameScreen(viewModel = viewModel, onVictorySaved = {
                     backStack.removeLastOrNull()
+                    onGameFinished()
                 })
             }
         }
