@@ -26,13 +26,14 @@ fun GameNavigation(
         ),
         entryProvider = entryProvider {
             entry<GameDestinations.BoardSizeScreen> {
+                onGameFinished()
                 BoardSizeScreen(onNavigateToBoard = {
                     backStack.add(GameDestinations.ChessboardScreen(it))
-                    onGameStarted()
                 })
             }
 
             entry<GameDestinations.ChessboardScreen> { key ->
+                onGameStarted()
                 val viewModel = hiltViewModel<GameViewModel, GameViewModel.Factory>(
                     creationCallback = { factory ->
                         factory.create(key.boardSize)
@@ -40,7 +41,7 @@ fun GameNavigation(
                 )
                 GameScreen(viewModel = viewModel, onVictorySaved = {
                     backStack.removeLastOrNull()
-                    onGameFinished()
+
                 })
             }
         }
