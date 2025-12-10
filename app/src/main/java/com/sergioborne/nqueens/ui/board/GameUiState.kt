@@ -9,7 +9,7 @@ import kotlin.math.abs
 data class GameUiState(
     val boardState: BoardUiState,
     val remainingQueens: Int,
-    val elapsedTime: String,
+    val elapsedTime: Long,
     val isVictory: Boolean,
 )
 

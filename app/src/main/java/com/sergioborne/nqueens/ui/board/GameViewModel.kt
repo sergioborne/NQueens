@@ -2,21 +2,27 @@ package com.sergioborne.nqueens.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sergioborne.nqueens.domain.Score
+import com.sergioborne.nqueens.repository.LeaderboardRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.Locale
+import java.util.Date
 
 @HiltViewModel(assistedFactory = GameViewModel.Factory::class)
 class GameViewModel @AssistedInject constructor(
     @Assisted val boardSize: Int,
+    val leaderboardRepository: LeaderboardRepository,
 ) : ViewModel() {
 
     private var timerJob: Job? = null
@@ -27,10 +33,18 @@ class GameViewModel @AssistedInject constructor(
             boardState = BoardUiState.empty(boardSize),
             remainingQueens = boardSize,
             isVictory = false,
-            elapsedTime = "0:00.00",
+            elapsedTime = 0L,
         )
     )
     val uiState: StateFlow<GameUiState> = _uiState
+
+    private val _events = Channel<Event>()
+    val events: Flow<Event>
+        get() = _events.receiveAsFlow()
+
+    sealed class Event {
+        data object VictorySaved : Event()
+    }
 
     init {
         startTimer()
@@ -66,11 +80,25 @@ class GameViewModel @AssistedInject constructor(
         }
     }
 
+    fun onVictorySave(name: String) {
+        viewModelScope.launch {
+            leaderboardRepository.insertScore(
+                Score(
+                    name = name,
+                    time = elapsedTimeInMillis,
+                    boardSize = boardSize,
+                    date = Date(),
+                )
+            )
+            _events.trySend(Event.VictorySaved)
+        }
+    }
+
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (true) {
-                _uiState.update { it.copy(elapsedTime = elapsedTimeInMillis.formatPreciseTime()) }
+                _uiState.update { it.copy(elapsedTime = elapsedTimeInMillis) }
                 delay(TIMER_DELAY_MS)
                 elapsedTimeInMillis += TIMER_DELAY_MS
             }
@@ -81,13 +109,6 @@ class GameViewModel @AssistedInject constructor(
         timerJob?.cancel()
     }
 
-    fun Long.formatPreciseTime(): String {
-        val totalSeconds = this / 1000
-        val cents = (this % 1000) / 10
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d.%2d", minutes, seconds, cents)
-    }
 
     companion object {
         private const val TIMER_DELAY_MS = 10L

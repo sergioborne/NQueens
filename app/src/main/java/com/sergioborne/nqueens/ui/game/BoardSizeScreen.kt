@@ -1,4 +1,4 @@
-package com.sergioborne.nqueens.ui.main
+package com.sergioborne.nqueens.ui.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,11 +18,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MainScreen(
+fun BoardSizeScreen(
     onNavigateToBoard: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var size by remember { mutableStateOf("8") }
+    var size by remember { mutableStateOf("4") }
 
     Column(
         modifier = modifier.fillMaxSize(),
@@ -44,5 +44,5 @@ fun MainScreen(
 @Preview(showBackground = true)
 @Composable
 fun MainScreenPreview() {
-    MainScreen(onNavigateToBoard = { })
+    BoardSizeScreen(onNavigateToBoard = { })
 }

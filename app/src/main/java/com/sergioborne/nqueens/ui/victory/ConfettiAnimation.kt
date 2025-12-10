@@ -1,4 +1,4 @@
-package com.sergioborne.nqueens.ui.board
+package com.sergioborne.nqueens.ui.victory
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
@@ -26,6 +26,7 @@ private data class Particle(
 
 @Composable
 fun ConfettiAnimation(
+    duration: Int,
     modifier: Modifier = Modifier,
     onAnimationFinished: () -> Unit
 ) {
@@ -34,7 +35,7 @@ fun ConfettiAnimation(
     val colors = listOf(Color.Red, Color.Blue, Color.Green, Color.Yellow, Color.Magenta, Color.Cyan)
 
     LaunchedEffect(Unit) {
-        val totalDuration = 5000L
+        val totalDuration = duration.toLong()
         val explosionInterval = 500L
         var elapsed = 0L
 
@@ -63,19 +64,21 @@ fun ConfettiAnimation(
     LaunchedEffect(Unit) {
         animationTime.animateTo(
             targetValue = 1f,
-            animationSpec = tween(durationMillis = 5000, easing = LinearEasing)
+            animationSpec = tween(durationMillis = duration, easing = LinearEasing)
         )
     }
 
     Canvas(modifier = modifier.fillMaxSize()) {
         val width = size.width
         val height = size.height
-        val currentTime = animationTime.value * 5000
+        val currentTime = animationTime.value * duration
         particles.forEach { particle ->
             val particleProgress = ((currentTime - particle.startTime) / 1500f).coerceIn(0f, 1f)
             if (particleProgress > 0 && particleProgress < 1) {
-                val currentX = particle.startX * width + particle.endX * width / 2 * particleProgress
-                val currentY = particle.startY * height + particle.endY * height / 2 * particleProgress
+                val currentX =
+                    particle.startX * width + particle.endX * width / 2 * particleProgress
+                val currentY =
+                    particle.startY * height + particle.endY * height / 2 * particleProgress
                 drawCircle(
                     color = particle.color,
                     center = Offset(currentX, currentY),
@@ -90,5 +93,7 @@ fun ConfettiAnimation(
 @Preview
 @Composable
 private fun FireworksAnimationPreview() {
-    ConfettiAnimation {}
+    ConfettiAnimation(
+        duration = 5000,
+    ) {}
 }

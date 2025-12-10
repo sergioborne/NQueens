@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,14 +25,28 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.formatPreciseTime
+import com.sergioborne.nqueens.ui.victory.VictoryScreen
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.flow.catch
 
 @Composable
 fun GameScreen(
     viewModel: GameViewModel,
-    onVictoryAnimationFinished: () -> Unit,
+    onVictorySaved: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel.events) {
+        viewModel.events.catch { it.printStackTrace() }
+            .collect { event ->
+                when (event) {
+                    is GameViewModel.Event.VictorySaved -> {
+                        onVictorySaved()
+                    }
+                }
+            }
+    }
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -40,7 +55,7 @@ fun GameScreen(
             GameContent(
                 size = state.boardState.size,
                 remainingQueens = state.remainingQueens,
-                elapsedTime = state.elapsedTime,
+                elapsedTime = state.elapsedTime.formatPreciseTime(),
                 cells = state.boardState.cells,
                 modifier = Modifier
                     .padding(innerPadding),
@@ -48,7 +63,9 @@ fun GameScreen(
                 onClearButtonClick = viewModel::onClearButtonClicked,
             )
             if (state.isVictory) {
-                ConfettiAnimation(onAnimationFinished = onVictoryAnimationFinished)
+                VictoryScreen(
+                    onVictorySaved = viewModel::onVictorySave,
+                )
             }
         }
     }
