@@ -1,6 +1,10 @@
 package com.sergioborne.nqueens.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -15,6 +19,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavKey
@@ -38,7 +43,11 @@ fun AppNavigation() {
 
     Scaffold(
         bottomBar = {
-            if (bottomBarVisible) {
+            AnimatedVisibility(
+                visible = bottomBarVisible,
+                exit = slideOutVertically { it },
+                enter = slideInVertically { it },
+            ) {
                 BottomBarNavigation(currentKey, onItemClick = { key ->
                     backStack.apply {
                         clear()
@@ -93,8 +102,9 @@ private fun BottomBarNavigation(
                 },
                 icon = {
                     Icon(
-                        painterResource(key.iconRes),
-                        contentDescription = key.label
+                        painter = painterResource(key.iconRes),
+                        contentDescription = key.label,
+                        modifier = Modifier.size(24.dp)
                     )
                 },
                 label = { Text(key.label) }
