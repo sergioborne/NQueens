@@ -16,7 +16,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -28,7 +31,9 @@ import com.sergioborne.nqueens.ui.theme.NQueensTheme
 import com.sergioborne.nqueens.ui.utils.formatPreciseTime
 import com.sergioborne.nqueens.ui.victory.VictoryScreen
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.isActive
 
 @Composable
 fun GameScreen(
@@ -55,7 +60,7 @@ fun GameScreen(
             GameContent(
                 size = state.boardState.size,
                 remainingQueens = state.remainingQueens,
-                elapsedTime = state.elapsedTime.formatPreciseTime(),
+                isVictory = state.isVictory,
                 cells = state.boardState.cells,
                 modifier = Modifier
                     .padding(innerPadding),
@@ -75,33 +80,40 @@ fun GameScreen(
 private fun GameContent(
     size: Int,
     remainingQueens: Int,
-    elapsedTime: String,
+    isVictory: Boolean,
     cells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
-    onCellClicked: (Int, Int) -> Unit,
+    onCellClicked: (Int, Int, Long) -> Unit,
     onClearButtonClick: () -> Unit,
 ) {
     val configuration = LocalConfiguration.current
     val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    val time = remember { mutableLongStateOf(0L) }
 
     if (isPortrait) {
         PortraitGameLayout(
             size = size,
             remainingQueens = remainingQueens,
-            elapsedTime = elapsedTime,
+            elapsedTime = time,
             cells = cells,
+            isVictory = isVictory,
             modifier = modifier,
-            onCellClicked = onCellClicked,
+            onCellClicked = { row, column ->
+                onCellClicked(row, column, time.longValue)
+            },
             onClearButtonClick = onClearButtonClick,
         )
     } else {
         LandscapeGameLayout(
             size = size,
             remainingQueens = remainingQueens,
-            elapsedTime = elapsedTime,
+            elapsedTime = time,
             cells = cells,
+            isVictory = isVictory,
             modifier = modifier,
-            onCellClicked = onCellClicked,
+            onCellClicked = { row, column ->
+                onCellClicked(row, column, time.longValue)
+            },
             onClearButtonClick = onClearButtonClick,
         )
     }
@@ -111,8 +123,9 @@ private fun GameContent(
 private fun PortraitGameLayout(
     size: Int,
     remainingQueens: Int,
-    elapsedTime: String,
     cells: ImmutableList<CellUi>,
+    elapsedTime: MutableState<Long>,
+    isVictory: Boolean,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -125,6 +138,7 @@ private fun PortraitGameLayout(
             remainingQueens = remainingQueens,
             elapsedTime = elapsedTime,
             isPortrait = true,
+            isVictory = isVictory,
         )
         Column(
             modifier = Modifier
@@ -150,7 +164,8 @@ private fun PortraitGameLayout(
 private fun LandscapeGameLayout(
     size: Int,
     remainingQueens: Int,
-    elapsedTime: String,
+    elapsedTime: MutableState<Long>,
+    isVictory: Boolean,
     cells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
@@ -165,6 +180,7 @@ private fun LandscapeGameLayout(
             remainingQueens = remainingQueens,
             elapsedTime = elapsedTime,
             isPortrait = false,
+            isVictory = isVictory,
         )
         Chessboard(
             size = size,
@@ -181,7 +197,8 @@ private fun LandscapeGameLayout(
 @Composable
 private fun GameStatus(
     remainingQueens: Int,
-    elapsedTime: String,
+    elapsedTime: MutableState<Long>,
+    isVictory: Boolean,
     isPortrait: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -192,14 +209,27 @@ private fun GameStatus(
             style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.height(8.dp))
-        TimerText(elapsedTime = elapsedTime)
+        TimerText(
+            elapsedTime = elapsedTime,
+            isVictory = isVictory,
+        )
     }
 }
 
 @Composable
-private fun TimerText(elapsedTime: String, modifier: Modifier = Modifier) {
+private fun TimerText(
+    elapsedTime: MutableState<Long>,
+    isVictory: Boolean,
+    modifier: Modifier = Modifier
+) {
+    LaunchedEffect(isVictory) {
+        while (isActive && !isVictory) {
+            delay(10)
+            elapsedTime.value += 10
+        }
+    }
     Text(
-        text = elapsedTime,
+        text = elapsedTime.value.formatPreciseTime(),
         modifier = modifier,
         style = MaterialTheme.typography.headlineMedium,
         fontWeight = FontWeight.Bold
@@ -215,8 +245,8 @@ fun GameContentPreview() {
             size = 8,
             cells = BoardUiState.empty(8).cells,
             remainingQueens = 8,
-            elapsedTime = "0:00.00",
-            onCellClicked = { _, _ -> },
+            isVictory = false,
+            onCellClicked = { _, _, _ -> },
             onClearButtonClick = {},
         )
     }
