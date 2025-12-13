@@ -3,8 +3,10 @@ package com.sergioborne.nqueens.ui.leaderboard
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,13 +31,16 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
-fun LeaderboardScreen() {
+fun LeaderboardScreen(
+    onPlayClicked: () -> Unit,
+) {
     val viewModel = hiltViewModel<LeaderboardViewModel>()
     val state = viewModel.uiState.collectAsStateWithLifecycle()
 
     LeaderboardContent(
         state = state.value,
         onClearLeaderboardClick = viewModel::clearLeaderboardClick,
+        onPlayClicked = onPlayClicked,
     )
 }
 
@@ -43,6 +48,7 @@ fun LeaderboardScreen() {
 fun LeaderboardContent(
     state: LeaderboardUiState,
     onClearLeaderboardClick: () -> Unit,
+    onPlayClicked: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -55,7 +61,6 @@ fun LeaderboardContent(
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        LeaderboardHeader()
         when (state) {
             is LeaderboardUiState.Content -> {
                 LeaderboardList(
@@ -69,6 +74,12 @@ fun LeaderboardContent(
                     modifier = Modifier.padding(32.dp)
                 )
             }
+
+            is LeaderboardUiState.Empty -> {
+                LeaderboardEmpty(
+                    onPlayClicked = onPlayClicked,
+                )
+            }
         }
 
     }
@@ -80,20 +91,21 @@ fun LeaderboardList(
     leaderboardEntries: ImmutableList<LeaderboardEntry>,
     onClearLeaderboardClick: () -> Unit,
 ) {
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        itemsIndexed(
-            items = leaderboardEntries,
-            key = { position, entry -> position }
-        ) { position, entry ->
-            LeaderboardListItem(
-                modifier = Modifier.animateItem(),
-                entry = entry,
-            )
-        }
-        if (leaderboardEntries.isNotEmpty()) {
+    Column {
+        LeaderboardHeader()
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            itemsIndexed(
+                items = leaderboardEntries,
+                key = { position, entry -> position }
+            ) { position, entry ->
+                LeaderboardListItem(
+                    modifier = Modifier.animateItem(),
+                    entry = entry,
+                )
+            }
             item {
                 Button(
                     modifier = Modifier.padding(32.dp),
@@ -165,6 +177,29 @@ fun LeaderboardListItem(
     }
 }
 
+@Composable
+fun LeaderboardEmpty(
+    onPlayClicked: () -> Unit,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "No scores yet, play some game to start seeing your results",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(32.dp))
+        Button(
+            onClick = onPlayClicked,
+        ) {
+            Text(text = "Let's play")
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun LeaderboardScreenPreview() {
@@ -190,6 +225,7 @@ fun LeaderboardScreenPreview() {
                 ),
             ),
             onClearLeaderboardClick = {},
+            onPlayClicked = {},
         )
     }
 }
@@ -201,6 +237,19 @@ fun LeaderboardScreenLoadingPreview() {
         LeaderboardContent(
             state = LeaderboardUiState.Loading,
             onClearLeaderboardClick = {},
+            onPlayClicked = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LeaderboardScreenEmptyPreview() {
+    NQueensTheme {
+        LeaderboardContent(
+            state = LeaderboardUiState.Empty,
+            onClearLeaderboardClick = {},
+            onPlayClicked = {},
         )
     }
 }

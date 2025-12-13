@@ -3,9 +3,9 @@ package com.sergioborne.nqueens.ui.components
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 
 /*
     A Number Picker Composable that allows users to pick a number from a given range.
@@ -34,7 +33,7 @@ import kotlinx.coroutines.delay
 */
 
 @Composable
-fun NumberPicker(
+fun HorizontalNumberPicker(
     from: Int,
     to: Int,
     fontSize: TextUnit,
@@ -50,12 +49,6 @@ fun NumberPicker(
             lazyListState = lazyListState,
             snapPosition = SnapPosition.Center,
         )
-    LaunchedEffect(Unit) {
-        delay(200)
-        lazyListState.animateScrollToItem(3)
-        delay(200)
-        lazyListState.animateScrollToItem(0)
-    }
 
     val centeredItemIndex = remember {
         derivedStateOf {
@@ -76,22 +69,21 @@ fun NumberPicker(
 
     Box(modifier = modifier) {
         val shownCount = 3
-        val itemHeight = with(LocalDensity.current) {
+        val itemWidth = with(LocalDensity.current) {
             fontSize.toDp()
         }
-        val listHeight = itemHeight * shownCount
-        LazyColumn(
+        val listWidth = itemWidth * shownCount
+        LazyRow(
             state = lazyListState,
             flingBehavior = flingBehavior,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(5.dp)
-                .height(listHeight)
                 .graphicsLayer { compositingStrategy = CompositingStrategy.Offscreen }
                 .drawWithContent {
                     drawContent()
                     drawRect(
-                        brush = Brush.verticalGradient(
+                        brush = Brush.horizontalGradient(
                             0f to Color.Transparent,
                             0.2f to Color.Black.copy(alpha = 0.2f),
                             0.5f to Color.Black,
@@ -103,7 +95,7 @@ fun NumberPicker(
                 },
         ) {
             item {
-                Box(modifier = Modifier.height(listHeight / 2 - itemHeight / 2))
+                Box(modifier = Modifier.width(listWidth / 2 - itemWidth / 2))
             }
             items(values) { value ->
                 Text(
@@ -113,7 +105,7 @@ fun NumberPicker(
                 )
             }
             item {
-                Box(modifier = Modifier.height(listHeight / 2 - itemHeight / 2))
+                Box(modifier = Modifier.width(listWidth / 2 - itemWidth / 2))
             }
         }
     }

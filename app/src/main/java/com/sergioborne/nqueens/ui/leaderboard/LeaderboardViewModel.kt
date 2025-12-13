@@ -31,21 +31,25 @@ class LeaderboardViewModel @Inject constructor(
             leaderboardRepository.getAllScores()
                 .catch { it.printStackTrace() }
                 .collect { scores ->
-                    _uiState.value = LeaderboardUiState.Content(
-                        leaderboardEntries = scores
-                            .sortedWith(
-                                compareBy(
-                                    { it.boardSize },
-                                    { it.time }
-                                )
-                            ).map { score ->
-                                LeaderboardEntry(
-                                    name = score.name,
-                                    boardSize = score.boardSize,
-                                    timeTakenMillis = score.time,
-                                )
-                            }.toImmutableList()
-                    )
+                    _uiState.value = if (scores.isEmpty()) {
+                        LeaderboardUiState.Empty
+                    } else {
+                        LeaderboardUiState.Content(
+                            leaderboardEntries = scores
+                                .sortedWith(
+                                    compareBy(
+                                        { it.boardSize },
+                                        { it.time }
+                                    )
+                                ).map { score ->
+                                    LeaderboardEntry(
+                                        name = score.name,
+                                        boardSize = score.boardSize,
+                                        timeTakenMillis = score.time,
+                                    )
+                                }.toImmutableList()
+                        )
+                    }
                 }
         }
     }
@@ -65,7 +69,7 @@ sealed interface LeaderboardUiState {
     ) : LeaderboardUiState
 
     data object Loading : LeaderboardUiState
-
+    data object Empty : LeaderboardUiState
 }
 
 @Stable
