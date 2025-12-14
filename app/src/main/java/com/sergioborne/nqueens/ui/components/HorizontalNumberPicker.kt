@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
@@ -39,7 +41,7 @@ fun HorizontalNumberPicker(
     to: Int,
     fontSize: TextUnit,
     onNumberSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    width: Dp,
 ) {
     val values = remember {
         (from..to).toList()
@@ -68,12 +70,11 @@ fun HorizontalNumberPicker(
         }
     }
 
-    Box(modifier = modifier) {
-        val shownCount = 3
+    Box(modifier = Modifier.width(width)) {
         val itemWidth = with(LocalDensity.current) {
             fontSize.toDp()
         }
-        val listWidth = itemWidth * shownCount
+        val listWidth = width
         LazyRow(
             state = lazyListState,
             flingBehavior = flingBehavior,
@@ -98,7 +99,7 @@ fun HorizontalNumberPicker(
         ) {
             items(values) { value ->
                 Text(
-                    modifier = Modifier.padding(5.dp),
+                    modifier = Modifier.padding(vertical = 5.dp, horizontal = 9.dp),
                     text = "$value",
                     fontSize = fontSize,
                 )

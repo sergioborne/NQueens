@@ -42,7 +42,7 @@ fun BoardSizeScreen(
             to = 20,
             fontSize = 50.sp,
             onNumberSelected = { size = it },
-            modifier = Modifier.width(150.dp)
+            width = 200.dp,
         )
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = { onNavigateToBoard(size) }) {
