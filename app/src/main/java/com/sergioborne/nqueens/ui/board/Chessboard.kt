@@ -20,7 +20,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun Chessboard(
     size: Int,
-    cells: ImmutableList<CellUi>,
+    occupiedCells: ImmutableList<CellUi>,
     onCellClicked: (Int, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -45,14 +45,15 @@ fun Chessboard(
                         .weight(1f)
                 ) {
                     repeat(size) { column ->
-                        val cell = cells[row * size + column]
+                        val cell =
+                            occupiedCells.firstOrNull { it.row == row && it.column == column }
                         val color = when {
-                            cell.isAttacked -> Color.Red
+                            cell?.isAttacked == true -> Color.Red
                             ((row + column) % 2 == 0) -> Color.White
                             else -> Color.Black
                         }
                         Cell(
-                            isQueen = cell.isQueen,
+                            isQueen = cell?.isQueen ?: false,
                             backgroundColor = color,
                             modifier = Modifier
                                 .weight(1f)
@@ -73,9 +74,9 @@ fun ChessboardPreview() {
     NQueensTheme {
         Chessboard(
             size = 8,
-            cells = BoardUiState.empty(8)
+            occupiedCells = BoardUiState.empty(8)
                 .changePosition(1, 1)
-                .changePosition(2, 3).cells,
+                .changePosition(2, 3).occupiedCells,
             onCellClicked = { _, _ -> },
         )
     }

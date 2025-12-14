@@ -62,7 +62,7 @@ fun GameScreen(
                 size = state.boardState.size,
                 remainingQueens = state.remainingQueens,
                 isVictory = state.isVictory,
-                cells = state.boardState.cells,
+                occupiedCells = state.boardState.occupiedCells,
                 modifier = Modifier
                     .padding(innerPadding),
                 onCellClicked = viewModel::onCellClicked,
@@ -82,7 +82,7 @@ private fun GameContent(
     size: Int,
     remainingQueens: Int,
     isVictory: Boolean,
-    cells: ImmutableList<CellUi>,
+    occupiedCells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int, Long) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -96,7 +96,7 @@ private fun GameContent(
             size = size,
             remainingQueens = remainingQueens,
             elapsedTime = time,
-            cells = cells,
+            occupiedCells = occupiedCells,
             isVictory = isVictory,
             modifier = modifier,
             onCellClicked = { row, column ->
@@ -109,7 +109,7 @@ private fun GameContent(
             size = size,
             remainingQueens = remainingQueens,
             elapsedTime = time,
-            cells = cells,
+            occupiedCells = occupiedCells,
             isVictory = isVictory,
             modifier = modifier,
             onCellClicked = { row, column ->
@@ -124,7 +124,7 @@ private fun GameContent(
 private fun PortraitGameLayout(
     size: Int,
     remainingQueens: Int,
-    cells: ImmutableList<CellUi>,
+    occupiedCells: ImmutableList<CellUi>,
     elapsedTime: MutableState<Long>,
     isVictory: Boolean,
     modifier: Modifier = Modifier,
@@ -150,7 +150,7 @@ private fun PortraitGameLayout(
         ) {
             Chessboard(
                 size = size,
-                cells = cells,
+                occupiedCells = occupiedCells,
                 modifier = modifier,
                 onCellClicked = onCellClicked,
             )
@@ -165,7 +165,7 @@ private fun LandscapeGameLayout(
     remainingQueens: Int,
     elapsedTime: MutableState<Long>,
     isVictory: Boolean,
-    cells: ImmutableList<CellUi>,
+    occupiedCells: ImmutableList<CellUi>,
     modifier: Modifier = Modifier,
     onCellClicked: (Int, Int) -> Unit,
     onClearButtonClick: () -> Unit,
@@ -183,7 +183,7 @@ private fun LandscapeGameLayout(
         )
         Chessboard(
             size = size,
-            cells = cells,
+            occupiedCells = occupiedCells,
             modifier = Modifier.fillMaxHeight(),
             onCellClicked = onCellClicked,
         )
@@ -249,7 +249,7 @@ fun GameContentPreview() {
     NQueensTheme {
         GameContent(
             size = 8,
-            cells = BoardUiState.empty(8).cells,
+            occupiedCells = BoardUiState.empty(8).occupiedCells,
             remainingQueens = 8,
             isVictory = false,
             onCellClicked = { _, _, _ -> },
