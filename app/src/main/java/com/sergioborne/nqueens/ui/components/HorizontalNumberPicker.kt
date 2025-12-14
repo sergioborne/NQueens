@@ -1,10 +1,11 @@
 package com.sergioborne.nqueens.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -93,19 +94,14 @@ fun HorizontalNumberPicker(
                         blendMode = BlendMode.DstIn
                     )
                 },
+            contentPadding = PaddingValues(horizontal = listWidth / 2 - itemWidth / 2)
         ) {
-            item {
-                Box(modifier = Modifier.width(listWidth / 2 - itemWidth / 2))
-            }
             items(values) { value ->
                 Text(
                     modifier = Modifier.padding(5.dp),
                     text = "$value",
                     fontSize = fontSize,
                 )
-            }
-            item {
-                Box(modifier = Modifier.width(listWidth / 2 - itemWidth / 2))
             }
         }
     }
