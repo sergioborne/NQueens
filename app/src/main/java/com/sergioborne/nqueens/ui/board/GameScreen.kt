@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -42,7 +43,7 @@ fun GameScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.events) {
+    LaunchedEffect(viewModel.events, onVictorySaved) {
         viewModel.events.catch { it.printStackTrace() }
             .collect { event ->
                 when (event) {
@@ -153,9 +154,7 @@ private fun PortraitGameLayout(
                 modifier = modifier,
                 onCellClicked = onCellClicked,
             )
-            Button(onClick = onClearButtonClick) {
-                Text(text = "Clear")
-            }
+            ClearBoardButton(onClearButtonClick)
         }
     }
 }
@@ -188,9 +187,7 @@ private fun LandscapeGameLayout(
             modifier = Modifier.fillMaxHeight(),
             onCellClicked = onCellClicked,
         )
-        Button(onClick = onClearButtonClick) {
-            Text(text = "Clear")
-        }
+        ClearBoardButton(onClearButtonClick)
     }
 }
 
@@ -236,6 +233,15 @@ private fun TimerText(
     )
 }
 
+@Composable
+private fun ClearBoardButton(onClearButtonClick: () -> Unit) {
+    Button(
+        onClick = onClearButtonClick,
+        modifier = Modifier.testTag("clear-button"),
+    ) {
+        Text(text = "Clear")
+    }
+}
 
 @Preview
 @Composable

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
@@ -55,7 +56,8 @@ fun Chessboard(
                             backgroundColor = color,
                             modifier = Modifier
                                 .weight(1f)
-                                .aspectRatio(1f),
+                                .aspectRatio(1f)
+                                .testTag("cell-$row-$column"),
                             onClick = { onCellClicked(row, column) }
                         )
                     }
