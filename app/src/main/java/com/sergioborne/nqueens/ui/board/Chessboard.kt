@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun Chessboard(
@@ -74,9 +75,20 @@ fun ChessboardPreview() {
     NQueensTheme {
         Chessboard(
             size = 8,
-            occupiedCells = BoardUiState.empty(8)
-                .changePosition(1, 1)
-                .changePosition(2, 3).occupiedCells,
+            occupiedCells = listOf(
+                CellUi(
+                    row = 1,
+                    column = 1,
+                    isQueen = true,
+                    isAttacked = false,
+                ),
+                CellUi(
+                    row = 2,
+                    column = 3,
+                    isQueen = true,
+                    isAttacked = false,
+                ),
+            ).toImmutableList(),
             onCellClicked = { _, _ -> },
         )
     }

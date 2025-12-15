@@ -2,12 +2,14 @@ package com.sergioborne.nqueens.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sergioborne.nqueens.domain.GameEngine
 import com.sergioborne.nqueens.domain.Score
 import com.sergioborne.nqueens.repository.LeaderboardRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +22,8 @@ import java.util.Date
 @HiltViewModel(assistedFactory = GameViewModel.Factory::class)
 class GameViewModel @AssistedInject constructor(
     @Assisted val boardSize: Int,
-    val leaderboardRepository: LeaderboardRepository,
+    private val leaderboardRepository: LeaderboardRepository,
+    private val gameEngine: GameEngine,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -41,14 +44,28 @@ class GameViewModel @AssistedInject constructor(
         data object VictorySaved : Event()
     }
 
+    init {
+        gameEngine.initGameEngine(boardSize)
+    }
+
     fun onCellClicked(rowPosition: Int, columnPosition: Int, timeElapsed: Long) {
-        val newBoardState = _uiState.value.boardState.changePosition(rowPosition, columnPosition)
-        val remainingQueens = boardSize - newBoardState.occupiedCells.size
-        val isVictory = remainingQueens == 0 && newBoardState.occupiedCells.none { it.isAttacked }
+        val cells = gameEngine.changePosition(rowPosition, columnPosition)
+        val remainingQueens = boardSize - cells.size
+        val isVictory = remainingQueens == 0 && cells.none { it.isAttacked }
 
         _uiState.update {
             GameUiState(
-                boardState = newBoardState,
+                boardState = BoardUiState(
+                    size = boardSize,
+                    occupiedCells = cells.map {
+                        CellUi(
+                            row = it.row,
+                            column = it.column,
+                            isQueen = it.isQueen,
+                            isAttacked = it.isAttacked,
+                        )
+                    }.toImmutableList()
+                ),
                 remainingQueens = remainingQueens,
                 isVictory = isVictory,
                 elapsedTime = timeElapsed,

@@ -20,33 +20,6 @@ data class BoardUiState(
     val occupiedCells: ImmutableList<CellUi>,
 ) {
 
-    fun changePosition(rowPosition: Int, columnPosition: Int): BoardUiState {
-        val newList: List<CellUi> =
-            if (occupiedCells.any { it.row == rowPosition && it.column == columnPosition }) {
-                occupiedCells.filterNot { it.row == rowPosition && it.column == columnPosition }
-            } else {
-                occupiedCells + CellUi(rowPosition, columnPosition, true, false)
-            }
-
-        val finalCells = newList.map { cell ->
-            val r = cell.row
-            val c = cell.column
-
-            val isAttacked =
-                if (cell.isQueen) {
-                    newList.any { (qr, qc) ->
-                        (r != qr || c != qc) && (r == qr || c == qc || abs(r - qr) == abs(c - qc))
-                    }
-                } else {
-                    false
-                }
-            cell.copy(isAttacked = isAttacked)
-        }.toImmutableList()
-
-        return this.copy(occupiedCells = finalCells)
-    }
-
-
     companion object {
         fun empty(size: Int) = BoardUiState(
             size = size,

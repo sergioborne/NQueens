@@ -1,6 +1,7 @@
 package com.sergioborne.nqueens.ui.board
 
 import app.cash.turbine.test
+import com.sergioborne.nqueens.domain.GameEngine
 import com.sergioborne.nqueens.domain.Score
 import com.sergioborne.nqueens.repository.LeaderboardRepository
 import com.sergioborne.nqueens.utils.MainDispatcherRule
@@ -25,11 +26,12 @@ class GameViewModelTest {
 
     private lateinit var viewModel: GameViewModel
     private val leaderboardRepository: LeaderboardRepository = mockk(relaxed = true)
+    private val gameEngine: GameEngine = GameEngine()
     private val boardSize = 4
 
     @Before
     fun setUp() {
-        viewModel = GameViewModel(boardSize, leaderboardRepository)
+        viewModel = GameViewModel(boardSize, leaderboardRepository, gameEngine)
     }
 
     @Test
@@ -45,7 +47,7 @@ class GameViewModelTest {
     fun `onCellClicked updates board and remaining queens`() = runTest {
         viewModel.onCellClicked(0, 0, timeElapsed = 10L)
         val state = viewModel.uiState.value
-        assertTrue(state.boardState.cells[0].isQueen)
+        assertTrue(state.boardState.occupiedCells[0].isQueen)
         assertEquals(boardSize - 1, state.remainingQueens)
         assertFalse(state.isVictory)
     }
@@ -76,7 +78,7 @@ class GameViewModelTest {
         viewModel.onClearButtonClicked()
         val state = viewModel.uiState.value
 
-        assertTrue(state.boardState.cells.none { it.isQueen })
+        assertTrue(state.boardState.occupiedCells.none { it.isQueen })
         assertEquals(boardSize, state.remainingQueens)
         assertFalse(state.isVictory)
     }
