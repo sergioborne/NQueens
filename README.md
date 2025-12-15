@@ -1,4 +1,4 @@
-# NQueens app ♟️
+# NQueens app (WIP)♟️
 
 ## 📱 Features
 
