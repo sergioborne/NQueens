@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -23,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -35,6 +35,8 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.sergioborne.nqueens.ui.game.GameNavigation
 import com.sergioborne.nqueens.ui.leaderboard.LeaderboardScreen
+import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 
 @Composable
 fun AppNavigation() {
@@ -47,6 +49,7 @@ fun AppNavigation() {
     var bottomBarVisible by remember { mutableStateOf(true) }
 
     Scaffold(
+        modifier = Modifier.background(NQueensTheme.colors.background),
         bottomBar = {
             AnimatedVisibility(
                 visible = bottomBarVisible,
@@ -63,7 +66,9 @@ fun AppNavigation() {
         }
     ) { innerPadding ->
         NavDisplay(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .background(NQueensTheme.colors.background)
+                .padding(innerPadding),
             backStack = backStack,
             onBack = { backStack.removeLastOrNull() },
             entryDecorators = listOf(
@@ -105,7 +110,10 @@ private fun BottomBarNavigation(
     currentKey: MainDestinations,
     onItemClick: (MainDestinations) -> Unit,
 ) {
-    NavigationBar {
+    NavigationBar(
+        containerColor = NQueensTheme.colors.surfaceContainer,
+        contentColor = NQueensTheme.colors.onSurfaceContainer,
+    ) {
         MainDestinations.items.forEach { key ->
             NavigationBarItem(
                 selected = key == currentKey,
@@ -121,8 +129,11 @@ private fun BottomBarNavigation(
                 },
                 label = { Text(key.label) },
                 colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = Color.Blue,
-                    unselectedIconColor = Color.Gray,
+                    selectedIconColor = NQueensTheme.colors.navigationBarSelectedItemColor,
+                    selectedTextColor = NQueensTheme.colors.navigationBarSelectedItemColor,
+                    unselectedIconColor = NQueensTheme.colors.navigationBarItemColor,
+                    unselectedTextColor = NQueensTheme.colors.navigationBarItemColor,
+                    indicatorColor = NQueensTheme.colors.navigationBarIndicatorColor,
                 )
             )
         }
@@ -137,5 +148,13 @@ private fun NavBackStack<NavKey>.navigateToKey(
         currentKey.value = keyToNavigate
         clear()
         add(keyToNavigate)
+    }
+}
+
+@ThemePreviewsWithBackground
+@Composable
+private fun BottomBarNavigationPreview() {
+    NQueensTheme {
+        BottomBarNavigation(MainDestinations.GameScreen) { }
     }
 }

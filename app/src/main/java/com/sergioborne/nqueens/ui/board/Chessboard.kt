@@ -1,20 +1,34 @@
 package com.sergioborne.nqueens.ui.board
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.sergioborne.nqueens.R
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -27,9 +41,8 @@ fun Chessboard(
 ) {
     BoxWithConstraints(
         modifier = modifier
-            .padding(16.dp)
             .background(
-                color = Color.Black,
+                color = NQueensTheme.colors.chessBoard1,
             )
             .padding(2.dp)
     ) {
@@ -49,9 +62,9 @@ fun Chessboard(
                         val cell =
                             occupiedCells.firstOrNull { it.row == row && it.column == column }
                         val color = when {
-                            cell?.isAttacked == true -> Color.Red
-                            ((row + column) % 2 == 0) -> Color.White
-                            else -> Color.Black
+                            cell?.isAttacked == true -> NQueensTheme.colors.attacked
+                            ((row + column) % 2 == 0) -> NQueensTheme.colors.chessBoard1
+                            else -> NQueensTheme.colors.chessBoard2
                         }
                         Cell(
                             isQueen = cell?.isQueen ?: false,
@@ -69,7 +82,48 @@ fun Chessboard(
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun Cell(
+    isQueen: Boolean,
+    backgroundColor: Color,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .clickable {
+                onClick.invoke()
+            }
+    ) {
+        AnimatedVisibility(
+            visible = isQueen,
+            enter = fadeIn() + scaleIn(),
+            exit = fadeOut() + scaleOut(),
+        ) {
+            Queen(
+                color = NQueensTheme.colors.queenIcon,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Queen(
+    modifier: Modifier = Modifier,
+    color: Color
+) {
+    Image(
+        painter = painterResource(id = R.drawable.ic_queen),
+        contentDescription = stringResource(id = R.string.queen_content_description),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(4.dp),
+        colorFilter = ColorFilter.tint(color)
+    )
+}
+
+@ThemePreviewsWithBackground
 @Composable
 fun ChessboardPreview() {
     NQueensTheme {

@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults.colors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,7 +30,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.room.util.copy
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 
 @Composable
 fun VictoryScreen(
@@ -63,7 +67,7 @@ fun VictoryScreen(
         Column(
             modifier = Modifier
                 .background(
-                    color = Color.White,
+                    color = NQueensTheme.colors.surfaceContainer,
                     shape = RoundedCornerShape(12.dp)
                 )
                 .padding(16.dp),
@@ -72,6 +76,7 @@ fun VictoryScreen(
         ) {
             Text(
                 text = "Congratulations!",
+                color = NQueensTheme.colors.textPrimary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -81,7 +86,13 @@ fun VictoryScreen(
                 onValueChange = { playerName = it },
                 label = { Text("Enter your name:") },
                 singleLine = true,
-                modifier = Modifier.testTag("victory-player-name")
+                colors = colors().copy(
+                    focusedTextColor = NQueensTheme.colors.textPrimary,
+                    unfocusedTextColor = NQueensTheme.colors.textPrimary,
+                    unfocusedLabelColor = NQueensTheme.colors.textSecondary,
+                    focusedLabelColor = NQueensTheme.colors.textSecondary,
+                ),
+                modifier = Modifier.testTag("victory-player-name"),
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,6 +102,7 @@ fun VictoryScreen(
                     onVictorySaved(playerName.text)
                 },
                 enabled = playerName.text.isNotBlank(),
+                colors = buttonColors(),
                 modifier = Modifier.testTag("victory-save-button")
             ) {
                 Text("Save")
@@ -99,7 +111,7 @@ fun VictoryScreen(
     }
 }
 
-@Preview
+@ThemePreviewsWithBackground
 @Composable
 private fun VictoryScreenPreview() {
     NQueensTheme {

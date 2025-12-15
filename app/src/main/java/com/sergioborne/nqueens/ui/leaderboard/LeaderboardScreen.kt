@@ -1,5 +1,6 @@
 package com.sergioborne.nqueens.ui.leaderboard
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardDefaults.cardColors
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 import com.sergioborne.nqueens.ui.utils.formatPreciseTime
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -52,6 +55,7 @@ fun LeaderboardContent(
 ) {
     Column(
         modifier = Modifier
+            .background(NQueensTheme.colors.background)
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -59,6 +63,7 @@ fun LeaderboardContent(
         Text(
             text = "Leaderboard",
             style = MaterialTheme.typography.headlineMedium,
+            color = NQueensTheme.colors.textPrimary,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         when (state) {
@@ -127,18 +132,25 @@ fun LeaderboardHeader() {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = "Name", modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+        Text(
+            text = "Name",
+            modifier = Modifier.weight(1f),
+            fontWeight = FontWeight.Bold,
+            color = NQueensTheme.colors.textPrimary,
+        )
         Text(
             text = "Board Size",
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = NQueensTheme.colors.textPrimary,
         )
         Text(
             text = "Time",
             modifier = Modifier.weight(1f),
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
+            color = NQueensTheme.colors.textPrimary,
         )
     }
 }
@@ -153,7 +165,11 @@ fun LeaderboardListItem(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = cardColors(
+            containerColor = NQueensTheme.colors.surfaceContainer,
+            contentColor = NQueensTheme.colors.onSurfaceContainer,
+        )
     ) {
         Row(
             modifier = Modifier
@@ -189,7 +205,8 @@ fun LeaderboardEmpty(
         Text(
             text = "No scores yet, play some game to start seeing your results",
             style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = NQueensTheme.colors.textPrimary,
         )
         Spacer(Modifier.height(32.dp))
         Button(
@@ -200,7 +217,7 @@ fun LeaderboardEmpty(
     }
 }
 
-@Preview(showBackground = true)
+@ThemePreviewsWithBackground
 @Composable
 fun LeaderboardScreenPreview() {
     NQueensTheme {
@@ -230,7 +247,7 @@ fun LeaderboardScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@ThemePreviewsWithBackground
 @Composable
 fun LeaderboardScreenLoadingPreview() {
     NQueensTheme {
@@ -242,7 +259,7 @@ fun LeaderboardScreenLoadingPreview() {
     }
 }
 
-@Preview(showBackground = true)
+@ThemePreviewsWithBackground
 @Composable
 fun LeaderboardScreenEmptyPreview() {
     NQueensTheme {

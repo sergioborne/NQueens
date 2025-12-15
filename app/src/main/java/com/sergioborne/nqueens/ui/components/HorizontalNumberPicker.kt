@@ -1,6 +1,5 @@
 package com.sergioborne.nqueens.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Box
@@ -42,6 +41,7 @@ fun HorizontalNumberPicker(
     fontSize: TextUnit,
     onNumberSelected: (Int) -> Unit,
     width: Dp,
+    textColor: Color,
 ) {
     val values = remember {
         (from..to).toList()
@@ -87,9 +87,9 @@ fun HorizontalNumberPicker(
                     drawRect(
                         brush = Brush.horizontalGradient(
                             0f to Color.Transparent,
-                            0.2f to Color.Black.copy(alpha = 0.2f),
-                            0.5f to Color.Black,
-                            0.8f to Color.Black.copy(alpha = 0.2f),
+                            0.2f to textColor.copy(alpha = 0.2f),
+                            0.5f to textColor,
+                            0.8f to textColor.copy(alpha = 0.2f),
                             1f to Color.Transparent
                         ),
                         blendMode = BlendMode.DstIn
@@ -102,6 +102,7 @@ fun HorizontalNumberPicker(
                     modifier = Modifier.padding(vertical = 5.dp, horizontal = 9.dp),
                     text = "$value",
                     fontSize = fontSize,
+                    color = textColor,
                 )
             }
         }

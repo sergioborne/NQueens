@@ -1,6 +1,7 @@
 package com.sergioborne.nqueens.ui.board
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,10 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
+import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 import com.sergioborne.nqueens.ui.utils.formatPreciseTime
 import com.sergioborne.nqueens.ui.victory.VictoryScreen
 import kotlinx.collections.immutable.ImmutableList
@@ -55,15 +56,16 @@ fun GameScreen(
     }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box {
+        Box{
             GameContent(
                 size = state.boardState.size,
                 remainingQueens = state.remainingQueens,
                 isVictory = state.isVictory,
                 occupiedCells = state.boardState.occupiedCells,
                 modifier = Modifier
+                    .background(NQueensTheme.colors.background)
                     .padding(innerPadding),
                 onCellClicked = viewModel::onCellClicked,
                 onClearButtonClick = viewModel::onClearButtonClicked,
@@ -132,7 +134,9 @@ private fun PortraitGameLayout(
     onClearButtonClick: () -> Unit,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(NQueensTheme.colors.background),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         GameStatus(
@@ -171,7 +175,9 @@ private fun LandscapeGameLayout(
     onClearButtonClick: () -> Unit,
 ) {
     Row(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(NQueensTheme.colors.background),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
@@ -203,7 +209,8 @@ private fun GameStatus(
     Column(modifier = modifier.padding(16.dp), horizontalAlignment = alignment) {
         Text(
             text = "Queens to place: $remainingQueens",
-            style = MaterialTheme.typography.bodyLarge
+            style = MaterialTheme.typography.bodyLarge,
+            color = NQueensTheme.colors.textPrimary,
         )
         Spacer(modifier = Modifier.height(8.dp))
         TimerText(
@@ -229,7 +236,8 @@ private fun TimerText(
         text = elapsedTime.value.formatPreciseTime(),
         modifier = modifier,
         style = MaterialTheme.typography.headlineMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = NQueensTheme.colors.textPrimary
     )
 }
 
@@ -243,7 +251,7 @@ private fun ClearBoardButton(onClearButtonClick: () -> Unit) {
     }
 }
 
-@Preview
+@ThemePreviewsWithBackground
 @Composable
 fun GameContentPreview() {
     NQueensTheme {
