@@ -4,6 +4,7 @@
 
 * Configurable board size (from 4 to 20)
 * Leaderboard
+* Support for theming (Right now light and dark mode but can be easily expanded)
 
 ## 🛠 Tech Stack
 
@@ -29,7 +30,9 @@
 
 #### Scenarios covered:
 
-* Game screen ()
+* Game screen
+
+* The rest of the screen do not have a complex enough behaviour to require UI testing
 
 
 ## 🔮 Future improvements
