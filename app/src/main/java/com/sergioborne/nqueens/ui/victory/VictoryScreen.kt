@@ -21,16 +21,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.room.util.copy
 import com.sergioborne.nqueens.ui.theme.NQueensTheme
 import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 
@@ -38,8 +35,8 @@ import com.sergioborne.nqueens.ui.utils.ThemePreviewsWithBackground
 fun VictoryScreen(
     onVictorySaved: (String) -> Unit,
 ) {
-    var playerName by remember { mutableStateOf(TextFieldValue("")) }
-    var showAnimation by remember { mutableStateOf(true) }
+    var playerName by rememberSaveable { mutableStateOf("") }
+    var showAnimation by rememberSaveable { mutableStateOf(true) }
 
     Box(
         modifier = Modifier
@@ -99,9 +96,9 @@ fun VictoryScreen(
 
             Button(
                 onClick = {
-                    onVictorySaved(playerName.text)
+                    onVictorySaved(playerName)
                 },
-                enabled = playerName.text.isNotBlank(),
+                enabled = playerName.isNotBlank(),
                 colors = buttonColors(),
                 modifier = Modifier.testTag("victory-save-button")
             ) {
