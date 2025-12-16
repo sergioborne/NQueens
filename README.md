@@ -20,6 +20,8 @@
 
 * Followed separation of concerns, ui, domain, data layers. But did not go too far in defining boundaries as the test is simple and that way dependencies handling is simpler
 * In case of a bigger codebase, I would split each feature in it’s own module, probably with an api and impl modules, putting the things that the feature needs to expose to other features in the api module as interfaces, and adding the implementation on the impl module.
+* The code is divided per screen/component with the composables, the view model and the uistate related in the same package
+* Even though the logic of the game is not complex and could have been handled directly in the viewmodel I prefered to create a GameEngine that lives in the domain layer as that way we follow SRR better and it's easier to test.
 
 
 ## 📱 UI Tests
@@ -47,7 +49,6 @@ Having in mind that there is limited time, here are some things that I would do 
 
 * Having the game timer in the ViewModel but was giving some issues with testing plus a lot of recompositions happening so I decided to move it directly to compose to simplify it.
 * Decided to use Compose Navigation 3 even though I did not have experience using it as I think it will be the standard pretty soon and it was worth a try.
-* Tried to avoid writing unit test for "proxy" classes that only call methods from a dependency as they don't give value for the assignement. In a production code I might add them as a safety layer in case changes are introduced in the future.
 
 ## 🚀 How to Run 
 
