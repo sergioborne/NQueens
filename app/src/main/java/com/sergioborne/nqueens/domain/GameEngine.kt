@@ -31,6 +31,10 @@ class GameEngine @Inject constructor() {
         return occupiedCells
     }
 
+    fun clearCells() {
+        occupiedCells = emptyList()
+    }
+
     private fun List<CellData>.calculateAttackingPositions(): List<CellData> {
         val rowCounts = this.groupingBy { it.row }.eachCount()
         val colCounts = this.groupingBy { it.column }.eachCount()

@@ -59,14 +59,7 @@ class GameViewModel @AssistedInject constructor(
             GameUiState(
                 boardState = BoardUiState(
                     size = boardSize,
-                    occupiedCells = cells.map {
-                        CellUi(
-                            row = it.row,
-                            column = it.column,
-                            isQueen = it.isOccupied,
-                            isAttacked = it.isAttacked,
-                        )
-                    }.toImmutableList()
+                    occupiedCells = cells.toCellsUi(),
                 ),
                 remainingQueens = remainingQueens,
                 isVictory = isVictory,
@@ -75,17 +68,8 @@ class GameViewModel @AssistedInject constructor(
         }
     }
 
-    private fun tryChangePosition(rowPosition: Int, columnPosition: Int): List<CellData> = try {
-        gameEngine.changePosition(rowPosition, columnPosition)
-    } catch (illegalArgumentException: IllegalArgumentException) {
-        illegalArgumentException.printStackTrace()
-        viewModelScope.launch {
-            _events.send(Event.ShowError)
-        }
-        emptyList()
-    }
-
     fun onClearButtonClicked() {
+        gameEngine.clearCells()
         _uiState.update {
             GameUiState(
                 boardState = BoardUiState.empty(boardSize),
@@ -109,6 +93,25 @@ class GameViewModel @AssistedInject constructor(
             _events.trySend(Event.VictorySaved)
         }
     }
+
+    private fun tryChangePosition(rowPosition: Int, columnPosition: Int): List<CellData> = try {
+        gameEngine.changePosition(rowPosition, columnPosition)
+    } catch (illegalArgumentException: IllegalArgumentException) {
+        illegalArgumentException.printStackTrace()
+        viewModelScope.launch {
+            _events.send(Event.ShowError)
+        }
+        emptyList()
+    }
+
+    private fun List<CellData>.toCellsUi() = map {
+        CellUi(
+            row = it.row,
+            column = it.column,
+            isQueen = it.isOccupied,
+            isAttacked = it.isAttacked,
+        )
+    }.toImmutableList()
 
     @AssistedFactory
     interface Factory {
