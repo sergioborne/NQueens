@@ -162,7 +162,7 @@ private fun PortraitGameLayout(
             Chessboard(
                 size = size,
                 occupiedCells = occupiedCells,
-                modifier = modifier,
+                modifier = Modifier.padding(32.dp),
                 onCellClicked = onCellClicked,
             )
             ClearBoardButton(onClearButtonClick)
