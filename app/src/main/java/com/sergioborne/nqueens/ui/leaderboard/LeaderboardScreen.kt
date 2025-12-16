@@ -178,7 +178,11 @@ fun LeaderboardListItem(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = entry.name, modifier = Modifier.weight(1f))
+            Text(
+                text = entry.name,
+                modifier = Modifier.weight(1f),
+                maxLines = 3,
+            )
             Text(
                 text = entry.boardSize.toString(),
                 modifier = Modifier.weight(1f),
@@ -226,6 +230,11 @@ fun LeaderboardScreenPreview() {
                 leaderboardEntries = persistentListOf(
                     LeaderboardEntry(
                         name = "John Doe",
+                        boardSize = 8,
+                        timeTakenMillis = 35000,
+                    ),
+                    LeaderboardEntry(
+                        name = "Very long name to get cut",
                         boardSize = 8,
                         timeTakenMillis = 35000,
                     ),
