@@ -35,13 +35,7 @@ class LeaderboardViewModel @Inject constructor(
                         LeaderboardUiState.Empty
                     } else {
                         LeaderboardUiState.Content(
-                            leaderboardEntries = scores
-                                .sortedWith(
-                                    compareBy(
-                                        { it.boardSize },
-                                        { it.time }
-                                    )
-                                ).map { score ->
+                            leaderboardEntries = scores.map { score ->
                                     LeaderboardEntry(
                                         name = score.name,
                                         boardSize = score.boardSize,

@@ -27,7 +27,7 @@ class GameEngineTest {
     fun `changePosition adds a queen`() {
         gameEngine.initGameEngine(8)
         val result = gameEngine.changePosition(0, 0)
-        val expected = listOf(CellData(row = 0, column = 0, isQueen = true, isAttacked = false))
+        val expected = listOf(CellData(row = 0, column = 0, isOccupied = true, isAttacked = false))
         assertEquals(
             expected,
             result,

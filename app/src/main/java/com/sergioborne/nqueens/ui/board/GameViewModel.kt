@@ -2,6 +2,7 @@ package com.sergioborne.nqueens.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sergioborne.nqueens.domain.CellData
 import com.sergioborne.nqueens.domain.GameEngine
 import com.sergioborne.nqueens.domain.Score
 import com.sergioborne.nqueens.repository.LeaderboardRepository
@@ -42,6 +43,7 @@ class GameViewModel @AssistedInject constructor(
 
     sealed class Event {
         data object VictorySaved : Event()
+        data object ShowError : Event()
     }
 
     init {
@@ -49,7 +51,7 @@ class GameViewModel @AssistedInject constructor(
     }
 
     fun onCellClicked(rowPosition: Int, columnPosition: Int, timeElapsed: Long) {
-        val cells = gameEngine.changePosition(rowPosition, columnPosition)
+        val cells = tryChangePosition(rowPosition = rowPosition, columnPosition = columnPosition)
         val remainingQueens = boardSize - cells.size
         val isVictory = remainingQueens == 0 && cells.none { it.isAttacked }
 
@@ -61,7 +63,7 @@ class GameViewModel @AssistedInject constructor(
                         CellUi(
                             row = it.row,
                             column = it.column,
-                            isQueen = it.isQueen,
+                            isQueen = it.isOccupied,
                             isAttacked = it.isAttacked,
                         )
                     }.toImmutableList()
@@ -71,6 +73,16 @@ class GameViewModel @AssistedInject constructor(
                 elapsedTime = timeElapsed,
             )
         }
+    }
+
+    private fun tryChangePosition(rowPosition: Int, columnPosition: Int): List<CellData> = try {
+        gameEngine.changePosition(rowPosition, columnPosition)
+    } catch (illegalArgumentException: IllegalArgumentException) {
+        illegalArgumentException.printStackTrace()
+        viewModelScope.launch {
+            _events.send(Event.ShowError)
+        }
+        emptyList()
     }
 
     fun onClearButtonClicked() {

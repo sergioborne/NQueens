@@ -1,6 +1,7 @@
 package com.sergioborne.nqueens.ui.board
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -42,6 +44,7 @@ fun GameScreen(
     viewModel: GameViewModel,
     onVictorySaved: () -> Unit,
 ) {
+    val context = LocalContext.current
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.events, onVictorySaved) {
@@ -51,6 +54,10 @@ fun GameScreen(
                     is GameViewModel.Event.VictorySaved -> {
                         onVictorySaved()
                     }
+
+                    is GameViewModel.Event.ShowError -> {
+                        Toast.makeText(context, "An error occurred", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
     }
@@ -58,7 +65,7 @@ fun GameScreen(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
     ) { innerPadding ->
-        Box{
+        Box {
             GameContent(
                 size = state.boardState.size,
                 remainingQueens = state.remainingQueens,

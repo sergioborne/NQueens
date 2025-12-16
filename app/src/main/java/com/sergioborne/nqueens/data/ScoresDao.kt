@@ -11,7 +11,7 @@ interface ScoresDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insert(score: ScoreEntity)
 
-    @Query("SELECT * FROM scores")
+    @Query("SELECT * FROM scores ORDER BY boardSize, time ASC")
     fun getAllScores(): Flow<List<ScoreEntity>>
 
     @Query("DELETE FROM scores")

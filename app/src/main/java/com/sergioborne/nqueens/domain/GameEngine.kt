@@ -1,11 +1,10 @@
 package com.sergioborne.nqueens.domain
 
 import javax.inject.Inject
-import kotlin.math.abs
 
 class GameEngine @Inject constructor() {
 
-    private val occupiedCells = mutableListOf<CellData>()
+    private var occupiedCells = listOf<CellData>()
     private var boardSize: Int = -1
 
     fun initGameEngine(size: Int) {
@@ -17,37 +16,35 @@ class GameEngine @Inject constructor() {
             throw IllegalArgumentException("Board size not initialized")
         }
 
-        if (occupiedCells.removeIf { it.row == rowPosition && it.column == columnPosition }.not()) {
-            occupiedCells.add(
-                CellData(
+        occupiedCells =
+            if (occupiedCells.any { it.row == rowPosition && it.column == columnPosition }) {
+                occupiedCells.filterNot { it.row == rowPosition && it.column == columnPosition }
+            } else {
+                occupiedCells + CellData(
                     row = rowPosition,
                     column = columnPosition,
-                    isQueen = true,
+                    isOccupied = true,
                     isAttacked = false,
                 )
-            )
-        }
+            }
 
         return occupiedCells.calculateAttackingPositions()
     }
 
-    private fun List<CellData>.calculateAttackingPositions(): List<CellData> =
-        map { cell ->
-            val cellRow = cell.row
-            val cellColumn = cell.column
+    private fun List<CellData>.calculateAttackingPositions(): List<CellData> {
+        val rowCounts = this.groupingBy { it.row }.eachCount()
+        val colCounts = this.groupingBy { it.column }.eachCount()
+        val sumDiagonalCounts = this.groupingBy { it.row + it.column }.eachCount()
+        val diffDiagonalCounts = this.groupingBy { it.row - it.column }.eachCount()
 
-            val isAttacked =
-                if (cell.isQueen) {
-                    any { (queenRow, queenColumn) ->
-                        (cellRow != queenRow || cellColumn != queenColumn)
-                                && (cellRow == queenRow || cellColumn == queenColumn || abs(
-                            cellRow - queenRow
-                        ) == abs(cellColumn - queenColumn))
-                    }
-                } else {
-                    false
-                }
-            cell.copy(isAttacked = isAttacked)
+        return this.map { queen ->
+            val isAttacked = ((rowCounts[queen.row] ?: 0) > 1) ||
+                    ((colCounts[queen.column] ?: 0) > 1) ||
+                    ((sumDiagonalCounts[queen.row + queen.column] ?: 0) > 1) ||
+                    ((diffDiagonalCounts[queen.row - queen.column] ?: 0) > 1)
+
+            queen.copy(isAttacked = isAttacked)
         }
+    }
 
 }
