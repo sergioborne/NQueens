@@ -26,9 +26,9 @@ class GameEngine @Inject constructor() {
                     isOccupied = true,
                     isAttacked = false,
                 )
-            }
+            }.calculateAttackingPositions()
 
-        return occupiedCells.calculateAttackingPositions()
+        return occupiedCells
     }
 
     private fun List<CellData>.calculateAttackingPositions(): List<CellData> {
